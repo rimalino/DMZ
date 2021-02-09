@@ -60,12 +60,13 @@
     "virtualNetworkHubName": "dmz-hub-vnet",
     "virtualNetworkSpokeName": "dmz-spoke-vnet",
     "vnetHubId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkHubName'))]",
-    "diagnosticStorageAccountName": "[concat('claw', uniqueString(resourceGroup().id))]"
+    "diagnosticStorageAccountName": "[concat('claw', uniqueString(resourceGroup().id))]",
+    "workspaceName": "dmz-test-wkspace"
   },
   "resources": [
     {
       "type": "Microsoft.OperationalInsights/workspaces",
-      "name": "dmz-la-workspace",
+      "name": "[variables('workspaceName')]",
       "apiVersion": "2020-08-01",
       "location": "[resourceGroup().location]",
       "properties": {
@@ -454,10 +455,10 @@
           "location": "[resourceGroup().location]",
           "dependsOn": [
             "[concat('Microsoft.Network/azureFirewalls/', variables('azfwName'))]",
-            "Microsoft.OperationalInsights/workspaces/dmz-la-workspace"
+            "[concat('Microsoft.OperationalInsights/workspaces/', variables('workspaceName'))]"
           ],
           "properties": {
-            "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', 'dmz-la-workspace')]",
+            "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('workspaceName'))]",
             "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('diagnosticStorageAccountName'))]",
             "logs": [
               {
