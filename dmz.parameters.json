@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "bastionPrefix": {
+      "value": "10.3.0.32/27"
+    },
+    "firewallPrefix": {
+      "value": "10.3.0.64/26"
+    },
+    "appPlanName": {
+      "value": "rimalinoapp2"
+    },
+    "webAppName": {
+      "value": "rimalinoweb2"
+    },
+    "appGwName": {
+      "value": "rimalinogw"
+    },
+    "appGwPrefix": {
+      "value": "10.3.0.16/28"
+    },
+    "vnetHubPrefix": {
+      "value": "10.3.0.0/24"
+    },
+    "vnetSpokePrefix": {
+      "value": "10.4.0.0/24"
+    }
+  }
+}
