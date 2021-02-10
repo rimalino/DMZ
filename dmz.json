@@ -49,6 +49,12 @@
       "metadata": {
         "description": "Prefix assigned to Spoke Virtual Network"
       }
+    },
+    "adminPassword": {
+      "type": "string",
+      "metadata": {
+        "description": "VM admin Password"
+      }
     }
   },
   "variables": {
@@ -61,7 +67,10 @@
     "virtualNetworkSpokeName": "dmz-spoke-vnet",
     "vnetHubId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkHubName'))]",
     "diagnosticStorageAccountName": "[concat('claw', uniqueString(resourceGroup().id))]",
-    "workspaceName": "dmz-test-wkspace"
+    "workspaceName": "dmz-test-wkspace",
+    "winNicName": "winvm-nic",
+    "winVMName": "win-vm",
+    "adminUsername": "adminuser"
   },
   "resources": [
     {
@@ -804,6 +813,79 @@
           "fileUploadLimitInMb": 100
         },
         "enableHttp2": false
+      }
+    },
+    {
+      "apiVersion": "2016-03-30",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[variables('winNicName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "NetworkInterface"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkSpokeName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkSpokeName'), variables('subnetName'))]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2019-07-01",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[variables('winVMName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "VirtualMachine"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/', variables('diagnosticStorageAccountName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces/', variables('winNicName'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "Standard_D2s_v3"
+        },
+        "osProfile": {
+          "computerName": "[variables('winVMName')]",
+          "adminUsername": "[variables('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]",
+          "windowsConfiguration": {
+            "enableAutomaticUpdates": true,
+            "provisionVMAgent": true
+          }
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2019-Datacenter",
+            "version": "latest"
+          },
+          "osDisk": {
+            "createOption": "FromImage",
+            "managedDisk": {
+              "storageAccountType": "Standard_LRS"
+            }
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('winNicName'))]"
+            }
+          ]
+        }
       }
     }
   ]
