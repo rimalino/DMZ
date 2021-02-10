@@ -20,7 +20,9 @@ jobs:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: dmzdemo-rg
         template: ./dmz.json
-        parameters: ./dmz.parameters.json
+        parameters: 
+          ./dmz.parameters.json
+          adminPassword=${{ secrets.ADMINPASSWORD }}
 
       # output containerName variable from template
     - run: echo ${{ steps.deploy.outputs.containerName }}
