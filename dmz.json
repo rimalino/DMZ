@@ -422,6 +422,35 @@
                 }
               ]
             }
+          },
+          {
+            "name": "Internet",
+            "properties": {
+              "priority": 1001,
+              "action": {
+                "type": "Allow"
+              },
+              "rules": [
+                {
+                  "name": "Internet",
+                  "protocols": [
+                    "Any"
+                  ],
+                  "sourceAddresses": [
+                    "*"
+                  ],
+                  "destinationAddresses": [
+                    "*"
+                  ],
+                  "sourceIpGroups": [],
+                  "destinationIpGroups": [],
+                  "destinationFqdns": [],
+                  "destinationPorts": [
+                    "*"
+                  ]
+                }
+              ]
+            }
           }
         ],
         "natRuleCollections": [
